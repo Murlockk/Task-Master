@@ -41,6 +41,9 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout.addWidget(self.scrollArea)
 
+        self.widget = QtWidgets.QWidget()
+        # self.container = QtWidgets.QHBoxLayout()
+        self.vbox = QtWidgets.QVBoxLayout()
 
         self.scrollArea_2 = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea_2.setWidgetResizable(True)
@@ -52,6 +55,9 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
         self.horizontalLayout.addWidget(self.scrollArea_2)
         MainWindow.setCentralWidget(self.centralwidget)
+
+        self.widget2 = QtWidgets.QWidget()
+        self.vbox2 = QtWidgets.QVBoxLayout()
 
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1192, 26))
@@ -72,9 +78,16 @@ class Ui_MainWindow(object):
         self.button.setText(_translate("MainWindow", "Hello"))
 
     def add_buttons(self):
-        btn =  QtWidgets.QPushButton(self.scrollAreaWidgetContents)
-        btn.setText('hello world!')
-        self.scrollArea.addWidget(QPushButton)
+        name = QtWidgets.QPushButton('TASK')
+        btn = QtWidgets.QPushButton('something')
+        container = QtWidgets.QHBoxLayout()
+        container.addWidget(name)
+        container.addWidget(btn)
+        self.vbox.addLayout(container)
+        # self.vbox.addWidget(name)
+        # self.vbox.addWidget(btn)
+        self.widget.setLayout(self.vbox)
+        self.scrollArea.setWidget(self.widget)
 
 
 if __name__ == "__main__":

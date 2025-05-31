@@ -96,7 +96,7 @@ class Ui_login_window(object):
                                        password=password))
             # login_window.close()
         else:
-            self.error_label.setText('Ошибка.\nНеверный email или пароль')
+            self.error_label.setText('Неверный email или пароль')
 
     def reg_but(self):
         print('reg')

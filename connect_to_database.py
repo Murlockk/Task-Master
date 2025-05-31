@@ -96,7 +96,7 @@ def login_in_account(login:str, password:str):
 
 def create_account(name:str, post:str, mail:str, password:str):
     cur.execute('''
-    INSERT INTO Users (name, post, mail, password) VALUEs (?,?,?,?)
+    INSERT INTO Users (name, post, mail, password) VALUES (?,?,?,?)
     ''', (name, post, mail, password))
     con.commit()
 

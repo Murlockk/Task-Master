@@ -3,7 +3,9 @@ from PyQt5.QtWidgets import QPushButton
 
 
 class Ui_MainWindow(object):
+    tasks = []
     def setupUi(self, MainWindow):
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1192, 819)
 
@@ -79,15 +81,27 @@ class Ui_MainWindow(object):
 
     def add_buttons(self):
         name = QtWidgets.QPushButton('TASK')
+        print('yes')
+        name.clicked.connect(lambda: self.show_full_task(name='Hello World',
+                                                 text='Do something\nor nothing\nxd'))
         btn = QtWidgets.QPushButton('something')
         container = QtWidgets.QHBoxLayout()
         container.addWidget(name)
         container.addWidget(btn)
         self.vbox.addLayout(container)
-        # self.vbox.addWidget(name)
-        # self.vbox.addWidget(btn)
         self.widget.setLayout(self.vbox)
         self.scrollArea.setWidget(self.widget)
+
+    def show_full_task(self, name, text):
+        print('yes')
+        label = QtWidgets.QLabel(name)
+        task = QtWidgets.QTextBrowser()
+        task.setText(text)
+        self.vbox2.addWidget(label)
+        self.vbox2.addWidget(task)
+        self.widget2.setLayout(self.vbox2)
+        self.scrollArea_2.setWidget(self.widget2)
+
 
 
 if __name__ == "__main__":

@@ -5,7 +5,6 @@ from create_new_task import Ui_Dialog
 
 
 class Ui_MainWindow(object):
-    tasks = []
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -81,6 +80,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "PushButton"))
         self.button.setText(_translate("MainWindow", "Hello"))
 
+
     def add_buttons(self):
         title, description = self.create_task()
         if title and description:
@@ -97,9 +97,7 @@ class Ui_MainWindow(object):
             self.scrollArea.setWidget(self.widget)
 
 
-
     def create_task(self):
-        # здесь надо открыть второе окно из которого потом достать переменные
         dialog = QtWidgets.QDialog()
         dialog_ui = Ui_Dialog()
         dialog_ui.setupUi(dialog)
@@ -110,11 +108,7 @@ class Ui_MainWindow(object):
         return None, None
 
 
-
-
     def show_full_task(self, name, text):
-        print('yes')
-        # self.scrollArea_2.removeWidget(self.vbox2)
 
         while self.vbox2.count():
             item = self.vbox2.takeAt(0)

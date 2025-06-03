@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QPushButton
 
+from create_new_task import Ui_Dialog
+
 
 class Ui_MainWindow(object):
     tasks = []
@@ -80,20 +82,46 @@ class Ui_MainWindow(object):
         self.button.setText(_translate("MainWindow", "Hello"))
 
     def add_buttons(self):
-        name = QtWidgets.QPushButton('TASK')
-        print('yes')
-        name.clicked.connect(lambda: self.show_full_task(name='Hello World',
-                                                 text='Do something\nor nothing\nxd'))
-        btn = QtWidgets.QPushButton('something')
-        container = QtWidgets.QHBoxLayout()
-        container.addWidget(name)
-        container.addWidget(btn)
-        self.vbox.addLayout(container)
-        self.widget.setLayout(self.vbox)
-        self.scrollArea.setWidget(self.widget)
+        title, description = self.create_task()
+        if title and description:
+            name = QtWidgets.QPushButton(title)
+            print('yes')
+            name.clicked.connect(lambda: self.show_full_task(name=title,
+                                                             text=description))
+            btn = QtWidgets.QPushButton('something')
+            container = QtWidgets.QHBoxLayout()
+            container.addWidget(name)
+            container.addWidget(btn)
+            self.vbox.addLayout(container)
+            self.widget.setLayout(self.vbox)
+            self.scrollArea.setWidget(self.widget)
+
+
+
+    def create_task(self):
+        # здесь надо открыть второе окно из которого потом достать переменные
+        dialog = QtWidgets.QDialog()
+        dialog_ui = Ui_Dialog()
+        dialog_ui.setupUi(dialog)
+
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            title, description = dialog_ui.get_data()
+            return title, description
+        return None, None
+
+
+
 
     def show_full_task(self, name, text):
         print('yes')
+        # self.scrollArea_2.removeWidget(self.vbox2)
+
+        while self.vbox2.count():
+            item = self.vbox2.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+
         label = QtWidgets.QLabel(name)
         task = QtWidgets.QTextBrowser()
         task.setText(text)

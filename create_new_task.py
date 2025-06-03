@@ -45,7 +45,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.accepted.connect(self.something)
+        # self.buttonBox.accepted.connect(self.something)
         self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -59,6 +59,9 @@ class Ui_Dialog(object):
         print(self.lineEdit.text())
         x = self.textEdit.toPlainText()
         print(x)
+
+    def get_data(self):
+        return self.lineEdit.text(), self.textEdit.toPlainText()
 
 
 if __name__ == "__main__":

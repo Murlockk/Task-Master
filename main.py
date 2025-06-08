@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QPushButton
 
 from create_new_task import Ui_Dialog
 
 
 class Ui_MainWindow(object):
+    user_name = ''
     def setupUi(self, MainWindow):
 
         MainWindow.setObjectName("MainWindow")
@@ -19,8 +19,14 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
 
+        self.user_name_label = QtWidgets.QLabel(self.centralwidget)
+        self.user_name_label.setText('HELLO WORLD')
+        self.user_name_label.setObjectName('user_name_label')
+        self.verticalLayout.addWidget(self.user_name_label)
+
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setObjectName("pushButton")
+
         self.verticalLayout.addWidget(self.pushButton)
 
         self.button = QtWidgets.QPushButton(self.centralwidget)
@@ -45,8 +51,44 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.scrollArea)
 
         self.widget = QtWidgets.QWidget()
-        # self.container = QtWidgets.QHBoxLayout()
         self.vbox = QtWidgets.QVBoxLayout()
+
+
+        # ПРИМЕР TREE WIDGET
+        # Создание Tree Widget
+        self.tree = QtWidgets.QTreeWidget(self.centralwidget)
+        self.tree.setHeaderLabels(["Название", "Описание"])  # Заголовки колонок
+
+        # Пример корневого элемента
+        task_group = QtWidgets.QTreeWidgetItem(self.tree)
+        task_group.setText(0, "Задачи")  # Колонка 0 — Название
+
+        # Подзадачи
+        task1 = QtWidgets.QTreeWidgetItem(task_group)
+        task1.setText(0, "Сделать домашку")
+        task1.setText(1, "По математике")
+
+        task2 = QtWidgets.QTreeWidgetItem(task_group)
+        task2.setText(0, "Прочитать статью")
+        task2.setText(1, "Про PyQt")
+
+        # Второй корень
+        project_group = QtWidgets.QTreeWidgetItem(self.tree)
+        project_group.setText(0, "Проекты")
+
+        project1 = QtWidgets.QTreeWidgetItem(project_group)
+        project1.setText(0, "Сделать UI")
+        project1.setText(1, "Интерфейс с кнопками и TreeView")
+
+        # Добавление в layout
+        self.vbox.addWidget(self.tree)
+
+        # Обновим ScrollArea
+        self.widget.setLayout(self.vbox)
+        self.scrollArea.setWidget(self.widget)
+
+        # КОНЕЦ ПРИМЕРА
+
 
         self.scrollArea_2 = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea_2.setWidgetResizable(True)
@@ -77,7 +119,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "PushButton"))
+        self.pushButton.setText(_translate("MainWindow", "Добавить задачу"))
         self.button.setText(_translate("MainWindow", "Hello"))
 
 
@@ -85,7 +127,6 @@ class Ui_MainWindow(object):
         title, description = self.create_task()
         if title and description:
             name = QtWidgets.QPushButton(title)
-            print('yes')
             name.clicked.connect(lambda: self.show_full_task(name=title,
                                                              text=description))
             btn = QtWidgets.QPushButton('something')

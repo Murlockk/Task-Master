@@ -1,12 +1,34 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from create_new_task import Ui_Dialog
+
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(400, 300)
+
+        self.layout = QtWidgets.QVBoxLayout(Dialog)
+
+        self.title_input = QtWidgets.QLineEdit(Dialog)
+        self.title_input.setPlaceholderText("Название задачи")
+        self.layout.addWidget(self.title_input)
+
+        self.description_input = QtWidgets.QTextEdit(Dialog)
+        self.description_input.setPlaceholderText("Описание задачи")
+        self.layout.addWidget(self.description_input)
+
+        self.button_box = QtWidgets.QDialogButtonBox(Dialog)
+        self.button_box.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        self.layout.addWidget(self.button_box)
+
+        self.button_box.accepted.connect(Dialog.accept)
+        self.button_box.rejected.connect(Dialog.reject)
+
+    def get_data(self):
+        return self.title_input.text(), self.description_input.toPlainText()
 
 
 class Ui_MainWindow(object):
-    user_name = ''
     def setupUi(self, MainWindow):
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1192, 819)
 
@@ -24,46 +46,53 @@ class Ui_MainWindow(object):
         self.user_name_label.setObjectName('user_name_label')
         self.verticalLayout.addWidget(self.user_name_label)
 
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setObjectName("pushButton")
+        # Кнопка добавления задачи
+        self.add_button = QtWidgets.QPushButton(self.centralwidget)
+        self.add_button.setText("Добавить задачу")
+        self.add_button.setObjectName("add_button")
+        self.verticalLayout.addWidget(self.add_button)
 
-        self.verticalLayout.addWidget(self.pushButton)
+        # Кнопка удаления задачи
+        self.delete_button = QtWidgets.QPushButton(self.centralwidget)
+        self.delete_button.setText("Удалить задачу")
+        self.delete_button.setObjectName("delete_button")
+        self.verticalLayout.addWidget(self.delete_button)
 
-        self.button = QtWidgets.QPushButton(self.centralwidget)
-        self.button.setObjectName('like')
+        # Кнопка просмотра задачи
+        self.view_button = QtWidgets.QPushButton(self.centralwidget)
+        self.view_button.setText("Просмотреть задачу")
+        self.view_button.setObjectName("view_button")
+        self.verticalLayout.addWidget(self.view_button)
 
-        self.verticalLayout.addWidget(self.button)
-        self.pushButton.clicked.connect(self.add_buttons)
+        self.add_button.clicked.connect(self.button_clicked)
+        self.delete_button.clicked.connect(self.delete_task)
+        self.view_button.clicked.connect(self.view_task)
 
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
 
         self.horizontalLayout.addLayout(self.verticalLayout)
 
+        # Создание первого QScrollArea
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
 
+        # виджет для содержимого первого ScrollArea
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 529, 744))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.horizontalLayout.addWidget(self.scrollArea)
 
-        self.widget = QtWidgets.QWidget()
-        self.vbox = QtWidgets.QVBoxLayout()
+        #  первый ScrollArea
+        self.vbox = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
 
-
-        # ПРИМЕР TREE WIDGET
         # Создание Tree Widget
-        self.tree = QtWidgets.QTreeWidget(self.centralwidget)
-        self.tree.setHeaderLabels(["Название", "Описание"])  # Заголовки колонок
+        self.tree = QtWidgets.QTreeWidget(self.scrollAreaWidgetContents)
+        self.tree.setHeaderLabels(["Название", "Описание"])
 
         # Пример корневого элемента
         task_group = QtWidgets.QTreeWidgetItem(self.tree)
-        task_group.setText(0, "Задачи")  # Колонка 0 — Название
+        task_group.setText(0, "Задачи")
 
-        # Подзадачи
         task1 = QtWidgets.QTreeWidgetItem(task_group)
         task1.setText(0, "Сделать домашку")
         task1.setText(1, "По математике")
@@ -80,95 +109,106 @@ class Ui_MainWindow(object):
         project1.setText(0, "Сделать UI")
         project1.setText(1, "Интерфейс с кнопками и TreeView")
 
-        # Добавление в layout
+        # Добавление дерева в 2ом qscrollArea
         self.vbox.addWidget(self.tree)
 
-        # Обновим ScrollArea
-        self.widget.setLayout(self.vbox)
-        self.scrollArea.setWidget(self.widget)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        # КОНЕЦ ПРИМЕРА
+        self.horizontalLayout.addWidget(self.scrollArea)
 
+        self.second_scroll_area = QtWidgets.QScrollArea(self.centralwidget)
+        self.second_scroll_area.setWidgetResizable(True)
+        self.second_scroll_area.setObjectName("second_scroll_area")
 
-        self.scrollArea_2 = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea_2.setWidgetResizable(True)
-        self.scrollArea_2.setObjectName("scrollArea_2")
+        self.second_scroll_area_widget_contents = QtWidgets.QWidget()
+        self.second_scroll_area_widget_contents.setObjectName("second_scroll_area_widget_contents")
 
-        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 528, 744))
-        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
-        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
-        self.horizontalLayout.addWidget(self.scrollArea_2)
+        self.second_vbox = QtWidgets.QVBoxLayout(self.second_scroll_area_widget_contents)
+
+        self.task_info_display = QtWidgets.QTextEdit(self.second_scroll_area_widget_contents)
+        self.task_info_display.setReadOnly(True)
+        self.second_vbox.addWidget(self.task_info_display)
+
+        self.second_scroll_area.setWidget(self.second_scroll_area_widget_contents)
+        self.horizontalLayout.addWidget(self.second_scroll_area)
+
         MainWindow.setCentralWidget(self.centralwidget)
+        self.tree.itemDoubleClicked.connect(self.view_task_on_double_click)
 
-        self.widget2 = QtWidgets.QWidget()
-        self.vbox2 = QtWidgets.QVBoxLayout()
-
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1192, 26))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "Добавить задачу"))
-        self.button.setText(_translate("MainWindow", "Hello"))
-
-
-    def add_buttons(self):
-        title, description = self.create_task()
-        if title and description:
-            name = QtWidgets.QPushButton(title)
-            name.clicked.connect(lambda: self.show_full_task(name=title,
-                                                             text=description))
-            btn = QtWidgets.QPushButton('something')
-            container = QtWidgets.QHBoxLayout()
-            container.addWidget(name)
-            container.addWidget(btn)
-            self.vbox.addLayout(container)
-            self.widget.setLayout(self.vbox)
-            self.scrollArea.setWidget(self.widget)
-
-
-    def create_task(self):
+    def button_clicked(self):
         dialog = QtWidgets.QDialog()
+
         dialog_ui = Ui_Dialog()
         dialog_ui.setupUi(dialog)
 
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             title, description = dialog_ui.get_data()
-            return title, description
-        return None, None
+            if title and description:
+                self.add_task_to_tree(title, description)
+
+    def add_task_to_tree(self, title, description):
+
+        task_group = self.tree.findItems("Задачи", QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)[0]
+
+        task_item = QtWidgets.QTreeWidgetItem(task_group)
+
+        task_item.setText(0, title)
+        task_item.setText(1, description)
+
+    def delete_task(self):
+        selected_items = self.tree.selectedItems()
 
 
-    def show_full_task(self, name, text):
+        print(selected_items)
 
-        while self.vbox2.count():
-            item = self.vbox2.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
+        if selected_items:
+            for item in selected_items:
+                index = self.tree.indexOfTopLevelItem(item)
+                if index != -1:
+                    self.tree.takeTopLevelItem(index)
+                else:
+                    parent = item.parent()
+                    if parent:
+                        index = parent.indexOfChild(item)
+                        parent.removeChild(item)
 
-        label = QtWidgets.QLabel(name)
-        task = QtWidgets.QTextBrowser()
-        task.setText(text)
-        self.vbox2.addWidget(label)
-        self.vbox2.addWidget(task)
-        self.widget2.setLayout(self.vbox2)
-        self.scrollArea_2.setWidget(self.widget2)
+    def view_task(self):
+        selected_items = self.tree.selectedItems()
 
+        if selected_items:
+            item = selected_items[0]
+            title = item.text(0)
+            description = item.text(1)
+
+            task_info = f"Название: {title}\n\nОписание: {description}"
+            self.task_info_display.setPlainText(task_info)
+
+    def view_task_on_double_click(self, item):
+        path_list = []
+        current_item = item
+
+        while current_item is not None:
+            path_list.append(current_item.text(0))
+            current_item = current_item.parent()
+
+        path_list.reverse()
+
+        if len(path_list) > 1:
+            project_name = path_list[-2]
+            task_name = path_list[-1]
+        else:
+            project_name = "Задачи"
+            task_name = path_list[0] if path_list else "Неизвестная задача"
+
+        description = item.text(1)
+
+        task_info = f"Проект: {project_name}\nЗадача: {task_name}\n\nОписание: {description}"
+        self.task_info_display.setPlainText(task_info)
 
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

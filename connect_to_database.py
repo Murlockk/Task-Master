@@ -22,20 +22,13 @@ def create_database():
     )''')
 
     cur.execute('''
-    CREATE TABLE IF NOT EXISTS Statuses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(20)
-    )''')
-
-    cur.execute('''
     CREATE TABLE IF NOT EXISTS Projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name VARCHAR(100),
     description TEXT,
     status INTEGER,
     create_date_time DATETIME,
-    deadline_date_time DATETIME,
-    FOREIGN KEY (status) REFERENCES Statuses (id) ON DELETE CASCADE
+    deadline_date_time DATETIME
     )''')
 
     cur.execute('''
@@ -55,8 +48,7 @@ def create_database():
     description TEXT,
     status INTEGER,
     create_date_time DATETIME,
-    deadline_date_time DATETIME,
-    FOREIGN KEY (status) REFERENCES Statuses (id)
+    deadline_date_time DATETIME
     )''')
 
     cur.execute('''

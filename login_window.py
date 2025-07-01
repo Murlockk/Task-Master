@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import connect_to_database as ctd
 import registration_window
+import main
 
 
 class Ui_login_window(object):
@@ -92,18 +93,29 @@ class Ui_login_window(object):
         password = self.password_lineEdit.text()
         if ctd.login_in_account(login=login,
                                 password=password):
-            print(ctd.login_in_account(login=login,
-                                       password=password))
-            # login_window.close()
+            user_id = ctd.login_in_account(login=login,
+                                       password=password)
+
+            login_window.close()
+            self.MainWindow = QtWidgets.QMainWindow()
+            self.ui = main.Ui_MainWindow()
+            self.ui.user_id = user_id
+            self.ui.setupUi(self.MainWindow)
+            self.MainWindow.show()
         else:
             self.error_label.setText('Неверный email или пароль')
 
     def reg_but(self):
-        print('reg')
         self.reg_window = QtWidgets.QDialog()
         self.reg_ui = registration_window.Ui_reg_window()
         self.reg_ui.setupUi(self.reg_window)
         self.reg_window.show()
+
+
+
+
+
+
 
 if __name__ == "__main__":
     import sys

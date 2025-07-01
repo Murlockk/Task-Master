@@ -1,5 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import connect_to_database as ctd
+import functools
+
+
 
 class Ui_reg_window(object):
     def setupUi(self, reg_window):
@@ -81,7 +84,7 @@ class Ui_reg_window(object):
         self.error_label.setObjectName("error_label")
 
         self.retranslateUi(reg_window)
-        self.buttonBox.accepted.connect(self.registration) # type: ignore
+        self.buttonBox.accepted.connect(functools.partial(self.registration, reg_window)) # type: ignore
 
         self.buttonBox.rejected.connect(reg_window.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(reg_window)
@@ -96,7 +99,7 @@ class Ui_reg_window(object):
         self.label_4.setText(_translate("reg_window", "Password"))
 
 
-    def registration(self):
+    def registration(self, reg_window):
         name = self.name_lineEdit.text()
         post = self.post_lineEdit.text()
         mail = self.email_lineEdit.text()
@@ -113,7 +116,8 @@ class Ui_reg_window(object):
 
         if len(error_message) == 0:
             ctd.create_account(name, post, mail, password)
-            QtWidgets.QDialog.close()
+            print('yes')
+            reg_window.accept()
 
 
 

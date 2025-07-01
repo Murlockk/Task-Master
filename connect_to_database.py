@@ -81,6 +81,7 @@ def login_in_account(login:str, password:str):
     cur.execute(f'SELECT id FROM Users WHERE mail = "{login}" AND password = "{password}"')
     answer = cur.fetchall()
     if answer:
+        # print(answer[0][0])
         return answer[0][0]
     else:
         return False
@@ -105,3 +106,38 @@ def registration_valid(email:str):
         return False
     else:
         return True
+
+def select_user_name(user_id):
+    cur.execute(f'SELECT name FROM Users WHERE id = "{user_id}"')
+    answer = cur.fetchall()
+    return answer[0][0]
+
+def select_users_projects(user_id):
+    cur.execute(f'''SELECT Projects.id, name, description, status FROM Projects 
+    JOIN Project_users ON Projects.id = project_users.project
+    WHERE Project_users.user = "{user_id}"''')
+    answer = cur.fetchall()
+    ids = []
+
+    for i in range(len(answer)):
+        ids.append(answer[i][0])
+
+    return answer, ids
+
+def delete_task(id):
+    cur.execute(f'''DELETE FROM Tasks WHERE id = "{id}"''')
+    print('done')
+    con.commit()
+
+
+def select_project_tasks(project_id):
+    cur.execute(f'''SELECT Tasks.id, name, description, status FROM Tasks
+    JOIN Project_tasks ON Project_tasks.task = Tasks.id
+    WHERE Project_tasks.project = "{project_id}"''')
+    answer = cur.fetchall()
+    return answer
+
+
+def update_task(id):
+    # функция обращения к базе данных
+    pass

@@ -1,5 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+import connect_to_database as ctd
+import taskClass
+from projectClass import Project
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -28,6 +32,7 @@ class Ui_Dialog(object):
 
 
 class Ui_MainWindow(object):
+    user_id = '1'
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1192, 819)
@@ -42,15 +47,29 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
 
         self.user_name_label = QtWidgets.QLabel(self.centralwidget)
-        self.user_name_label.setText('HELLO WORLD')
+        self.user_name_label.setText(ctd.select_user_name(self.user_id))
         self.user_name_label.setObjectName('user_name_label')
         self.verticalLayout.addWidget(self.user_name_label)
 
+        # кнопка обновления дерева
+        self.update_tree_button = QtWidgets.QPushButton(self.centralwidget)
+        self.update_tree_button.setText('Обновить дерево')
+        self.update_tree_button.setObjectName('update_tree_button')
+        self.verticalLayout.addWidget(self.update_tree_button)
+        self.update_tree_button.clicked.connect(self.update_tree)
+
+
+        # кнопка создания проекта
+        self.add_proj_button = QtWidgets.QPushButton(self.centralwidget)
+        self.add_proj_button.setText("Добавить проект")
+        self.add_proj_button.setObjectName("add_proj_button")
+        self.verticalLayout.addWidget(self.add_proj_button)
+
         # Кнопка добавления задачи
-        self.add_button = QtWidgets.QPushButton(self.centralwidget)
-        self.add_button.setText("Добавить задачу")
-        self.add_button.setObjectName("add_button")
-        self.verticalLayout.addWidget(self.add_button)
+        self.add_task_button = QtWidgets.QPushButton(self.centralwidget)
+        self.add_task_button.setText("Добавить задачу")
+        self.add_task_button.setObjectName("add_task_button")
+        self.verticalLayout.addWidget(self.add_task_button)
 
         # Кнопка удаления задачи
         self.delete_button = QtWidgets.QPushButton(self.centralwidget)
@@ -64,7 +83,8 @@ class Ui_MainWindow(object):
         self.view_button.setObjectName("view_button")
         self.verticalLayout.addWidget(self.view_button)
 
-        self.add_button.clicked.connect(self.button_clicked)
+        # self.add_proj_button.clicked.connect(self.nothing)
+        self.add_task_button.clicked.connect(self.button_clicked)
         self.delete_button.clicked.connect(self.delete_task)
         self.view_button.clicked.connect(self.view_task)
 
@@ -87,29 +107,8 @@ class Ui_MainWindow(object):
 
         # Создание Tree Widget
         self.tree = QtWidgets.QTreeWidget(self.scrollAreaWidgetContents)
-        self.tree.setHeaderLabels(["Название", "Описание"])
+        self.tree.setHeaderLabels(["Название", "Описание", "Статус"])
 
-        # Пример корневого элемента
-        task_group = QtWidgets.QTreeWidgetItem(self.tree)
-        task_group.setText(0, "Задачи")
-
-        task1 = QtWidgets.QTreeWidgetItem(task_group)
-        task1.setText(0, "Сделать домашку")
-        task1.setText(1, "По математике")
-
-        task2 = QtWidgets.QTreeWidgetItem(task_group)
-        task2.setText(0, "Прочитать статью")
-        task2.setText(1, "Про PyQt")
-
-        # Второй корень
-        project_group = QtWidgets.QTreeWidgetItem(self.tree)
-        project_group.setText(0, "Проекты")
-
-        project1 = QtWidgets.QTreeWidgetItem(project_group)
-        project1.setText(0, "Сделать UI")
-        project1.setText(1, "Интерфейс с кнопками и TreeView")
-
-        # Добавление дерева в 2ом qscrollArea
         self.vbox.addWidget(self.tree)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -135,6 +134,24 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.tree.itemDoubleClicked.connect(self.view_task_on_double_click)
 
+
+    # def something(self, id):
+    #     task_db = ctd.select_task(id)
+    #     task_class = taskClass.Task(task_db[0], task_db[1], task_db[2])
+    #     task_class.update()
+
+    def selected_item(self):
+        selected_item = self.tree.selectedItems()
+        if selected_item:
+            item = selected_item[0]
+            if item.parent() is None:
+                print(f'project - {item.data(0, QtCore.Qt.UserRole)}')
+
+                return 'proj', item.data(0, QtCore.Qt.UserRole)
+            else:
+                print(f'task - {item.data(0, QtCore.Qt.UserRole)}')
+                return 'task', item.data(0, QtCore.Qt.UserRole)
+
     def button_clicked(self):
         dialog = QtWidgets.QDialog()
 
@@ -146,6 +163,29 @@ class Ui_MainWindow(object):
             if title and description:
                 self.add_task_to_tree(title, description)
 
+    def update_tree(self):
+        self.tree.clear()
+        projects, ids = ctd.select_users_projects(self.user_id)
+
+        if projects:
+            for i in range(len(projects)):
+                proj = QtWidgets.QTreeWidgetItem(self.tree)
+                proj.setText(0, projects[i][1])
+                proj.setText(1, projects[i][2])
+                proj.setText(2, projects[i][3])
+                proj.setData(0, QtCore.Qt.UserRole, projects[i][0])
+
+                proj_tasks = ctd.select_project_tasks(ids[i])
+
+                for j in range(len(proj_tasks)):
+                    task = QtWidgets.QTreeWidgetItem(proj)
+                    task.setText(0, proj_tasks[j][1])
+                    task.setText(1, proj_tasks[j][2])
+                    task.setText(2, proj_tasks[j][3])
+                    task.setData(0, QtCore.Qt.UserRole, proj_tasks[j][0])
+
+
+
     def add_task_to_tree(self, title, description):
 
         task_group = self.tree.findItems("Задачи", QtCore.Qt.MatchExactly | QtCore.Qt.MatchRecursive)[0]
@@ -155,22 +195,34 @@ class Ui_MainWindow(object):
         task_item.setText(0, title)
         task_item.setText(1, description)
 
+    # def delete_task(self):
+    #     selected_items = self.tree.selectedItems()
+    #
+    #     print(selected_items)
+    #
+    #     if selected_items:
+    #         for item in selected_items:
+    #             index = self.tree.indexOfTopLevelItem(item)
+    #             if index != -1:
+    #                 self.tree.takeTopLevelItem(index)
+    #             else:
+    #                 parent = item.parent()
+    #                 if parent:
+    #                     index = parent.indexOfChild(item)
+    #                     parent.removeChild(item)
+
+
+
     def delete_task(self):
-        selected_items = self.tree.selectedItems()
+        element_type, element_id = self.selected_item()
+        if element_type == 'proj':
+            print(f'delete proj where id = {element_id}')
+        elif element_type == 'task':
+            print(f'delete task where id = {element_id}')
+            ctd.delete_task(element_id)
+        self.update_tree()
 
-
-        print(selected_items)
-
-        if selected_items:
-            for item in selected_items:
-                index = self.tree.indexOfTopLevelItem(item)
-                if index != -1:
-                    self.tree.takeTopLevelItem(index)
-                else:
-                    parent = item.parent()
-                    if parent:
-                        index = parent.indexOfChild(item)
-                        parent.removeChild(item)
+        pass
 
     def view_task(self):
         selected_items = self.tree.selectedItems()
